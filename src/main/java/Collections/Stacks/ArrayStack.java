@@ -14,6 +14,7 @@ public class ArrayStack<T> implements StackADT<T> {
         stack = (T[]) (new Object[DEFAULT_CAPACITY]);
     }
 
+
     public ArrayStack(int initialCapacity) {
         top = 0;
         stack = (T[]) (new Object[initialCapacity]);
