@@ -60,11 +60,12 @@ public class ArrayStack<T> implements StackADT<T> {
 
     @Override
     public String toString() {
-        String result = "Stack Top to Bottom:\nNumber of elements: " + top + "\n--START--\n";
+        String result = "Stack Contents (Top to Bottom):\n";
         for (int i = 0; i < top; i++) {
-            result = result + stack[i].toString() + "\n";
+            result += stack[i] + " ";
         }
-        result += "--END--\n";
         return result;
     }
+
+
 }

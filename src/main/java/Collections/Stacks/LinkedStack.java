@@ -50,14 +50,15 @@ public class LinkedStack<T> implements StackADT<T> {
 
     @Override
     public String toString() {
-        String result = "Stack Top to Bottom:\nNumber of elements: " + count + "\n--START--\n";
+        String result = "Stack Contents:\nElements (Top to Bottom):\n";
         Node<T> current = top;
 
         while (current != null) {
-            result = result + current.toString() + "\n";
+            result += current.getElement() + "\n";
             current = current.getNext();
         }
-        result += "--END--";
+
         return result;
     }
+
 }
