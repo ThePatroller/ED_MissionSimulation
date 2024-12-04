@@ -1,9 +1,9 @@
 package API;
 
-import Collections.Graphs.Graph;
+import Collections.Graphs.Network;
 import Collections.Lists.LinkedUnorderedList;
 
-public class MapaExtension<T> extends Graph {
+public class MapaExtension<T> extends Network {
 
     public MapaExtension() {
         super();
