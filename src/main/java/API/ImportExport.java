@@ -3,8 +3,9 @@ package API;
 import API.Enums.TipoAlvo;
 import API.Enums.TipoEntidade;
 import API.Enums.TipoItem;
+import API.MapExtension;
 import Collections.Graphs.Graph;
-import Collections.Lists.LinkedUnorderedList;
+import Collections.Lists.ArrayUnorderedList;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,8 +19,8 @@ public class ImportExport<T> {
     private static String currentWorkingDir = System.getProperty("user.dir");
     protected static final String MISSOES_FILE_PATH = currentWorkingDir + "/src/Files/missoes.json";
 
-    public LinkedUnorderedList<Missao> importMissoes() {
-        LinkedUnorderedList<Missao> missoes = new LinkedUnorderedList<>();
+    public ArrayUnorderedList<Missao> importMissoes() {
+        ArrayUnorderedList<Missao> missoes = new ArrayUnorderedList<>();
 
         try {
             // Abrir o arquivo JSON
@@ -37,15 +38,15 @@ public class ImportExport<T> {
                 String codMissao = (String) missaoObj.get("cod-missao");
                 long versao = (long) missaoObj.get("versao");
 
-                // Construir o grafo (edificio)
-                JSONArray edificioArray = (JSONArray) missaoObj.get("edificio");
-                Graph<Divisao> edificio = new Graph<>();
+                // Construir o grafo (mapa)
+                JSONArray mapaArray = (JSONArray) missaoObj.get("mapa");
+                MapaExtension<Divisao> mapa = new MapaExtension<>();
 
                 // Criar as divisões e adicionar ao grafo
-                for (Object div : edificioArray) {
+                for (Object div : mapaArray) {
                     String nomeDivisao = (String) div;
                     Divisao divisao = new Divisao(nomeDivisao);
-                    edificio.addVertex(divisao);
+                    mapa.addVertex(divisao);
                 }
 
                 // Adicionar conexões (ligações) ao grafo
@@ -55,11 +56,11 @@ public class ImportExport<T> {
                     String origem = (String) ligacao.get(0);
                     String destino = (String) ligacao.get(1);
 
-                    Divisao origemDivisao = encontrarDivisaoPorNome(edificio, origem);
-                    Divisao destinoDivisao = encontrarDivisaoPorNome(edificio, destino);
+                    Divisao origemDivisao = mapa.encontrarDivisaoPorNome(origem);
+                    Divisao destinoDivisao = mapa.encontrarDivisaoPorNome(destino);
 
                     if (origemDivisao != null && destinoDivisao != null) {
-                        edificio.addEdge(origemDivisao, destinoDivisao);
+                        mapa.addEdge(origemDivisao, destinoDivisao);
                     }
                 }
 
@@ -67,7 +68,7 @@ public class ImportExport<T> {
                 JSONArray entradasSaidasArray = (JSONArray) missaoObj.get("entradas-saidas");
                 for (Object entradaSaida : entradasSaidasArray) {
                     String nomeDivisao = (String) entradaSaida;
-                    Divisao divisao = encontrarDivisaoPorNome(edificio, nomeDivisao);
+                    Divisao divisao = mapa.encontrarDivisaoPorNome(nomeDivisao);
                     if (divisao != null) {
                         divisao.setEntradaSaida(true);
                     }
@@ -81,16 +82,10 @@ public class ImportExport<T> {
                     long poder = (long) inimigoJSON.get("poder");
                     String divisaoNome = (String) inimigoJSON.get("divisao");
 
-                    Divisao divisao = encontrarDivisaoPorNome(edificio, divisaoNome);
+                    Divisao divisao = mapa.encontrarDivisaoPorNome(divisaoNome);
                     if (divisao != null) {
                         // Criar inimigo com tipo padrão
-                        Inimigo inimigo = new Inimigo(
-                                nomeInimigo,
-                                100, // Vida padrão
-                                (int) poder,
-                                divisaoNome,
-                                TipoEntidade.inimigo// Enum TipoEntidade
-                        );
+                        Inimigo inimigo = new Inimigo(nomeInimigo, 100, (int) poder, divisaoNome, TipoEntidade.inimigo);
 
                         divisao.getPessoasPresentes().addToRear(inimigo);
                         divisao.setNumPessoasPresentes(divisao.getNumPessoasPresentes() + 1);
@@ -112,7 +107,7 @@ public class ImportExport<T> {
                         pontos = ((Long) itemJSON.get("pontos-extra")).intValue();
                     }
 
-                    Divisao divisao = encontrarDivisaoPorNome(edificio, divisaoNome);
+                    Divisao divisao = mapa.encontrarDivisaoPorNome(divisaoNome);
                     if (divisao != null) {
                         // Criar item com o tipo apropriado
                         TipoItem tipoItem = TipoItem.valueOf(tipoItemStr.toUpperCase().replace(" ", "_"));
@@ -130,7 +125,7 @@ public class ImportExport<T> {
                 Alvo alvo = new Alvo(divisaoAlvo, TipoAlvo.valueOf(tipoAlvo));
 
                 // Criar a missão e adicionar à lista
-                Missao missao = new Missao(codMissao, (int) versao, edificio, alvo);
+                Missao missao = new Missao(codMissao, (int) versao, mapa, alvo);
                 missoes.addToRear(missao);
             }
         } catch (IOException | ParseException e) {
@@ -139,13 +134,5 @@ public class ImportExport<T> {
 
         return missoes;
     }
-
-    public Divisao encontrarDivisaoPorNome(Graph<Divisao> graph,String nome) {
-
-    }
-
-
-
-
 
 }

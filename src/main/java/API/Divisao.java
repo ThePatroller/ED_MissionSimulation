@@ -1,23 +1,23 @@
 package API;
 
-import Collections.Lists.LinkedUnorderedList;
+import Collections.Lists.ArrayUnorderedList;
 
 
 public class Divisao {
 
     private String nome;
     private boolean entradaSaida;
-    private LinkedUnorderedList<Entidade> pessoasPresentes;
+    private ArrayUnorderedList<Entidade> pessoasPresentes;
     private int numPessoasPresentes;
-    private LinkedUnorderedList<Item> itensPresentes;
+    private ArrayUnorderedList<Item> itensPresentes;
     private int numItensPresentes;
 
     public Divisao(String nome) {
         this.nome = nome;
         this.entradaSaida = false;
-        this.pessoasPresentes = new LinkedUnorderedList<>();
+        this.pessoasPresentes = new ArrayUnorderedList<>();
         this.numPessoasPresentes = 0;
-        this.itensPresentes = new LinkedUnorderedList<>();
+        this.itensPresentes = new ArrayUnorderedList<>();
         this.numItensPresentes = 0;
     }
 
@@ -45,11 +45,11 @@ public class Divisao {
         this.entradaSaida = entradaSaida;
     }
 
-    public LinkedUnorderedList<Entidade> getPessoasPresentes() {
+    public ArrayUnorderedList<Entidade> getPessoasPresentes() {
         return pessoasPresentes;
     }
 
-    public void setPessoasPresentes(LinkedUnorderedList<Entidade> pessoasPresentes) {
+    public void setPessoasPresentes(ArrayUnorderedList<Entidade> pessoasPresentes) {
         this.pessoasPresentes = pessoasPresentes;
     }
 
@@ -61,11 +61,11 @@ public class Divisao {
         this.numPessoasPresentes = numPessoasPresentes;
     }
 
-    public LinkedUnorderedList<Item> getItensPresentes() {
+    public ArrayUnorderedList<Item> getItensPresentes() {
         return itensPresentes;
     }
 
-    public void setItensPresentes(LinkedUnorderedList<Item> itensPresentes) {
+    public void setItensPresentes(ArrayUnorderedList<Item> itensPresentes) {
         this.itensPresentes = itensPresentes;
     }
 
