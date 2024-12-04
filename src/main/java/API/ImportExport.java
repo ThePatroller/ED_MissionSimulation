@@ -4,10 +4,8 @@ import API.Enums.TipoAlvo;
 import API.Enums.TipoEntidade;
 import API.Enums.TipoItem;
 import API.MapExtension;
-import Collections.Graphs.Graph;
 import Collections.Lists.ArrayUnorderedList;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -85,7 +83,7 @@ public class ImportExport<T> {
                     Divisao divisao = mapa.encontrarDivisaoPorNome(divisaoNome);
                     if (divisao != null) {
                         // Criar inimigo com tipo padrão
-                        Inimigo inimigo = new Inimigo(nomeInimigo, 100, (int) poder, divisaoNome, TipoEntidade.inimigo);
+                        Inimigo inimigo = new Inimigo(nomeInimigo, 100, (int) poder, divisaoNome, TipoEntidade.INIMIGO);
 
                         divisao.getPessoasPresentes().addToRear(inimigo);
                         divisao.setNumPessoasPresentes(divisao.getNumPessoasPresentes() + 1);

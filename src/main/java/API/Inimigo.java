@@ -8,4 +8,8 @@ public class Inimigo extends Entidade{
         super(nome, vida, poder, divisao, tipoEntidade);
     }
 
+    public boolean foiDerrotado() {
+        return this.getVida() < 0;
+    }
+
 }

@@ -1,5 +1,8 @@
 package API.Enums;
 
 public enum TipoAlvo {
-    quimico, bomba, refem, tesouro
+    QUIMICO,
+    BOMBA,
+    REFEM,
+    TESOURO;
 }

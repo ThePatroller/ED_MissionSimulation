@@ -176,7 +176,7 @@ public abstract class ArrayList<T> implements ListADT<T> {
             }
 
             if (!hasNext()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("There is no next element.");
             }
             this.okToRemove = true;
 

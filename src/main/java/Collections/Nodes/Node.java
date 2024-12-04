@@ -2,8 +2,8 @@ package Collections.Nodes;
 
 public class Node<T> {
 
-    private Node<T> next;
-    private T element;
+    public Node<T> next; //Changed to public to be able to use on Iterator class on LinkedList
+    public T element; // Same
 
     public Node() {
         next = null;
