@@ -1,14 +1,16 @@
 package Collections.Lists;
 
 import Collections.Exceptions.EmptyCollectionException;
-import Collections.Exceptions.NoSuchElementException;
+
 import java.util.ConcurrentModificationException;
-import Collections.Lists.ListADT;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public abstract class ArrayList<T> implements ListADT<T> {
 
-    private final int DEFAULT_CAPACITY = 20, NOT_FOUND = -1, EXPAND_BY = 2;
+    private final int DEFAULT_CAPACITY = 20;
+    private final int EXPAND_NUMBER = 2;
+    private final int NOT_FOUND = -1;
 
     protected int modCount;
     protected int rear;
@@ -20,14 +22,14 @@ public abstract class ArrayList<T> implements ListADT<T> {
         this.list = (T[]) new Object[DEFAULT_CAPACITY];
     }
 
-    public ArrayList(int initialCapacity) {
+    public ArrayList(int capacity) {
         modCount = 0;
         this.rear = 0;
-        this.list = (T[]) (new Object[initialCapacity]);
+        this.list = (T[]) (new Object[capacity]);
     }
 
     protected void expandCapacity() {
-        T[] newList = (T[]) new Object[EXPAND_BY * list.length];
+        T[] newList = (T[]) new Object[EXPAND_NUMBER * list.length];
         int i = 0;
         for (T t : list) {
             newList[i++] = t;
@@ -35,10 +37,9 @@ public abstract class ArrayList<T> implements ListADT<T> {
         list = newList;
     }
 
-    @Override
     public T removeFirst() throws EmptyCollectionException {
         if (isEmpty()) {
-            throw new EmptyCollectionException("Empty list");
+            throw new EmptyCollectionException("Lista vazia!");
         }
         T element = list[0];
 
@@ -50,10 +51,9 @@ public abstract class ArrayList<T> implements ListADT<T> {
         return element;
     }
 
-    @Override
     public T removeLast() throws EmptyCollectionException {
         if (isEmpty()) {
-            throw new EmptyCollectionException("Empty list");
+            throw new EmptyCollectionException("Lista vazia!");
         }
         T element = list[rear - 1];
 
@@ -62,29 +62,40 @@ public abstract class ArrayList<T> implements ListADT<T> {
         return element;
     }
 
+    protected int find(T target) {
+        for (int i = 0; i < rear; i++) {
+            if (list[i].equals(target)) {
+                return i;
+            }
+        }
+        return NOT_FOUND;
+    }
+
     @Override
-    public T remove(T element) throws EmptyCollectionException, NoSuchElementException {
+    public T remove(T element) throws EmptyCollectionException {
         if (isEmpty()) {
-            throw new EmptyCollectionException("Empty list");
+            throw new EmptyCollectionException("Lista vazia!");
         }
 
         int index = find(element);
+        if(index != -1){
+            T removedElement = list[index];
 
-        T removedElement = list[index];
+            for (int i = index; i < rear - 1; i++) {
+                list[i] = list[i + 1];
+            }
 
-        for (int i = index; i < rear - 1; i++) {
-            list[i] = list[i + 1];
+            list[--rear] = null;
+            modCount++;
+            return removedElement;
         }
-
-        list[--rear] = null;
-        modCount++;
-        return removedElement;
+        return null;
     }
 
     @Override
     public T first() throws EmptyCollectionException {
         if (isEmpty()) {
-            throw new EmptyCollectionException("Empty list");
+            throw new EmptyCollectionException("Lista vazia!");
         }
         return list[0];
     }
@@ -92,45 +103,22 @@ public abstract class ArrayList<T> implements ListADT<T> {
     @Override
     public T last() throws EmptyCollectionException {
         if (isEmpty()) {
-            throw new EmptyCollectionException("Empty list");
+            throw new EmptyCollectionException("Lista vazia!");
         }
         return list[rear - 1];
-
-    }
-
-    protected int find(T target) throws NoSuchElementException {
-        for (int i = 0; i < rear; i++) {
-            if (list[i].equals(target)) {
-                return i;
-            }
-        }
-        throw new NoSuchElementException("Target not found");
-    }
-
-    public T get(int index) throws IllegalArgumentException {
-        if (!indexIsValid(index)) {
-            throw new IllegalArgumentException("Index invalid");
-        }
-        return list[index];
-    }
-
-    private boolean indexIsValid(int index) {
-        return ((index < size()) && index >= 0);
     }
 
     @Override
     public boolean contains(T target) {
-        try {
-            find(target);
+        if(find(target) != -1){
             return true;
-        } catch (NoSuchElementException ex) {
-            return false;
         }
+        return false;
     }
 
     @Override
     public boolean isEmpty() {
-        return (size() == 0);
+        return size() == 0;
     }
 
     @Override
@@ -139,26 +127,26 @@ public abstract class ArrayList<T> implements ListADT<T> {
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new MyIterator();
+    public String toString() {
+        String str = "Lista: \n";
+        for (int i = 0; i < rear; i++) {
+            str += list[i] + "\n";
+        }
+        return str;
     }
 
     @Override
-    public String toString() {
-        String string = "List: \n";
-        for (int j = 0; j < rear; j++) {
-            string += list[j] + "\n";
-        }
-        return string;
+    public Iterator<T> iterator() {
+        return new ListIterator();
     }
 
-    private class MyIterator implements Iterator<T> {
+    private class ListIterator implements Iterator<T> {
 
         private boolean okToRemove;
         private int expectedModCount;
         private int current;
 
-        public MyIterator() {
+        public ListIterator() {
             expectedModCount = modCount;
             current = 0;
             okToRemove = false;
@@ -172,39 +160,31 @@ public abstract class ArrayList<T> implements ListADT<T> {
         @Override
         public T next() {
             if (expectedModCount != modCount) {
-                throw new java.util.ConcurrentModificationException();
+                throw new ConcurrentModificationException();
             }
 
             if (!hasNext()) {
                 throw new NoSuchElementException("There is no next element.");
             }
             this.okToRemove = true;
-
             return (T) list[this.current++];
         }
 
         @Override
         public void remove() {
-
-            //expectedModCount
             if (expectedModCount != modCount) {
-                throw new ConcurrentModificationException();
+                throw new java.util.ConcurrentModificationException();
             }
-
             if (!this.okToRemove) {
                 throw new IllegalStateException();
             }
-
             this.okToRemove = false;
-
             try {
                 ArrayList.this.remove(list[--this.current]);
                 this.expectedModCount++;
-            } catch (EmptyCollectionException ex) {
-
-            }
-
+            } catch (EmptyCollectionException ex) {}
         }
 
     }
+
 }

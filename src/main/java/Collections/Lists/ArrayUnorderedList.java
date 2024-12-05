@@ -1,25 +1,20 @@
 package Collections.Lists;
 
-import Collections.Lists.UnorderedListADT;
-import Collections.Exceptions.EmptyCollectionException;
-import Collections.Exceptions.NoSuchElementException;
-
 public class ArrayUnorderedList<T> extends ArrayList<T> implements UnorderedListADT<T> {
 
     public ArrayUnorderedList() {
         super();
     }
 
-    public ArrayUnorderedList(int initialCapacity) {
-        super(initialCapacity);
+    public ArrayUnorderedList(int capacity) {
+        super(capacity);
     }
 
     @Override
     public void addToFront(T element) {
-        if (super.size() == list.length) {
+        if (size() == list.length) {
             expandCapacity();
         }
-
         for (int i = rear; i > 0; --i) {
             list[i] = list[i - 1];
         }
@@ -31,7 +26,7 @@ public class ArrayUnorderedList<T> extends ArrayList<T> implements UnorderedList
 
     @Override
     public void addToRear(T element) {
-        if (super.size() == list.length) {
+        if (size() == list.length) {
             expandCapacity();
         }
 
@@ -40,26 +35,20 @@ public class ArrayUnorderedList<T> extends ArrayList<T> implements UnorderedList
     }
 
     @Override
-    public void addAfter(T element, T target) throws EmptyCollectionException, NoSuchElementException {
-        if (super.size() == list.length) {
+    public void addAfter(T element, T target){
+        if (size() == list.length) {
             expandCapacity();
-        }
-        if (isEmpty()) {
-            throw new EmptyCollectionException("Empty list");
         }
 
         int targetIndex = find(target);
-
-        for (int i = rear; i > targetIndex + 1; --i) {
-            list[i] = list[i - 1];
+        if(targetIndex != -1){
+            for (int i = rear; i > targetIndex + 1; --i) {
+                list[i] = list[i - 1];
+            }
+            list[targetIndex + 1] = element;
+            rear++;
+            modCount++;
         }
-
-        list[targetIndex + 1] = element;
-        rear++;
-        modCount++;
     }
 
-
-
 }
-
