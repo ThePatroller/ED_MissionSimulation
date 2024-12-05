@@ -21,14 +21,17 @@ public class ModoManual {
                 confrontoJogador(divisao, jogador);
 
             }
+            if(divisao.hasAlvo()){
+
+            }
         }
     }
 
-    public void confrontoJogador(Divisao divisao, Entidade primeiroAtacante){
+    public void confrontoJogador(Divisao divisao){
         int i = 0;
         while(divisao.getPessoa(i) != null){
             if(divisao.getPessoa(i).getTipoEntidade() == TipoEntidade.inimigo){
-                divisao.getPessoa(i).tomarDano(primeiroAtacante.getPoder());
+                divisao.getPessoa(i).tomarDano(jogador.getPoder());
                 if (divisao.getPessoa(i).getVida() <= 0){
                     divisao.removePessoa(i);
                     i--;
@@ -40,14 +43,37 @@ public class ModoManual {
         if(divisao.getNumPessoasPresentes() > 1){
             while(divisao.getPessoa(j) != null){
                 if(divisao.getPessoa(j).getTipoEntidade() == TipoEntidade.inimigo){
-                    primeiroAtacante.tomarDano(divisao.getPessoa(j).getPoder());
-                    if (primeiroAtacante.getVida() <= 0){
+                    jogador.tomarDano(divisao.getPessoa(j).getPoder());
+                    if (jogador.getVida() <= 0){
                         divisao.removePessoa(j);
                         fimDeJogo();
                         j--;
                     }
                 }
                 j++;
+            }
+        }
+    }
+
+    public void moverJogador(Divisao origem, Divisao destino){
+        if(origem != null && destino != null){
+            jogador.setDivisao(destino.getNome());
+            destino.addPessoa(origem.removePessoa(jogador));
+            if(destino.hasItens()){
+                while(destino.hasItens()){
+                    jogador.guardarItem(destino.removeItem());
+                }
+            }
+            if(destino.getNumPessoasPresentes() > 1){
+                confrontoJogador(destino);
+                if(destino.getNumPessoasPresentes() > 1){
+                    moverTodosInimigos();
+                }
+            }else{
+                moverTodosInimigos();
+            }
+            if(destino.hasAlvo()){
+
             }
         }
     }
