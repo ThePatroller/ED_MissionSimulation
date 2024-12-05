@@ -1,28 +1,27 @@
 package Collections.Lists;
 
-import Collections.Lists.OrderedListADT;
-import Collections.Lists.ArrayList;
-import Collections.Exceptions.NonComparableElementException;
-
 public class ArrayOrderedList<T> extends ArrayList<T> implements OrderedListADT<T> {
+
+    public ArrayOrderedList() {
+        super();
+    }
 
     public ArrayOrderedList(int initialCapacity) {
         super(initialCapacity);
     }
 
     @Override
-    public void add(T element) throws NonComparableElementException {
-
-        if (super.size() == list.length) {
+    public void add(T element) throws IllegalArgumentException {
+        if (size() == list.length) {
             expandCapacity();
         }
 
-        int position = 0;
         if (!(element instanceof Comparable<?>)) {
-            throw new NonComparableElementException("Not comparable");
+            throw new IllegalArgumentException("Elemento não comparavel!");
         }
         Comparable<T> comparable = (Comparable<T>) element;
 
+        int position = 0;
         while (position < rear && comparable.compareTo(list[position]) > 0) {
             ++position;
         }
@@ -37,4 +36,3 @@ public class ArrayOrderedList<T> extends ArrayList<T> implements OrderedListADT<
     }
 
 }
-

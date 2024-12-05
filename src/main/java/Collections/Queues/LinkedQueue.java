@@ -1,46 +1,55 @@
 package Collections.Queues;
 
-import Collections.Nodes.Node;
 import Collections.Exceptions.EmptyCollectionException;
-import Collections.Queues.QueueADT;
+import Collections.Nodes.LinearNode;
 
 public class LinkedQueue<T> implements QueueADT<T> {
 
-    private Node<T> front;
-    private Node<T> rear;
-    private int count;
+    private int counter;
+    private LinearNode<T> front;
+    private LinearNode<T> rear;
 
     public LinkedQueue() {
-        this.front = this.rear = null;
-        this.count = 0;
-    }
-
-    @Override
-    public T dequeue() throws EmptyCollectionException {
-        if (isEmpty())
-            throw new EmptyCollectionException("Queue is empty.\n");
-        T removed = front.getElement();
-        front = (front == rear) ? (rear = null) : (front.getNext());
-        count--;
-        return removed;
+        this.front = null;
+        this.rear = null;
+        this.counter = 0;
     }
 
     @Override
     public void enqueue(T element) {
-        Node<T> newNode = new Node<T>(element);
+        LinearNode<T> newNode = new LinearNode<>(element);
+
         if (isEmpty()) {
-            front = rear = newNode;
+            this.front = newNode;
         } else {
-            rear.setNext(newNode);
-            rear = newNode;
+            this.rear.setNext(newNode);
         }
-        count++;
+
+        this.rear = newNode;
+        this.counter++;
+    }
+
+    @Override
+    public T dequeue() throws EmptyCollectionException {
+        if (isEmpty()) {
+            throw new EmptyCollectionException("Fila vazia!");
+        }
+        T element = this.front.getElement();
+
+        this.front = this.front.getNext();
+        this.counter--;
+        if (isEmpty()) {
+            this.rear = null;
+        }
+
+        return element;
     }
 
     @Override
     public T first() throws EmptyCollectionException {
-        if (isEmpty())
-            throw new EmptyCollectionException("Queue is empty.\n");
+        if (isEmpty()) {
+            throw new EmptyCollectionException("Fila vazia!");
+        }
         return front.getElement();
     }
 
@@ -51,18 +60,19 @@ public class LinkedQueue<T> implements QueueADT<T> {
 
     @Override
     public int size() {
-        return count;
+        return counter;
     }
 
     @Override
     public String toString() {
-        String result = "Queue Contents (Front to Rear):\n";
-        Node<T> current = front;
+        LinearNode<T> current = front;
+        String str = "Queue: \n";
         while (current != null) {
-            result += current.getElement() + " ";
+            str += current.getElement() + "\n";
             current = current.getNext();
         }
-        return result.trim();
+        return str;
     }
+
 }
 
