@@ -45,36 +45,58 @@ public class Divisao {
         this.entradaSaida = entradaSaida;
     }
 
-    public ArrayUnorderedList<Entidade> getPessoasPresentes() {
-        return pessoasPresentes;
+    public Entidade getPessoa(int index) {
+        if(pessoasPresentes.contains(pessoasPresentes.get(index))){
+            return pessoasPresentes.get(index);
+        }
+        return null;
     }
 
-    public void setPessoasPresentes(ArrayUnorderedList<Entidade> pessoasPresentes) {
-        this.pessoasPresentes = pessoasPresentes;
+    public void addPessoa(Entidade pessoa){
+        if(pessoa != null){
+            pessoasPresentes.addToRear(pessoa);
+            numPessoasPresentes++;
+        }
     }
 
-    public int getNumPessoasPresentes() {
-        return numPessoasPresentes;
+    public Entidade removePessoa(int index){
+        Entidade removido = null;
+        if(pessoasPresentes.get(index) != null){
+            removido = pessoasPresentes.remove(pessoasPresentes.get(index));
+            numPessoasPresentes--;
+        }
+        return removido;
     }
 
-    public void setNumPessoasPresentes(int numPessoasPresentes) {
-        this.numPessoasPresentes = numPessoasPresentes;
+    public Item getItem(int index) {
+        if(itensPresentes.contains(itensPresentes.get(index))){
+            return itensPresentes.get(index);
+        }
+        return null;
     }
 
-    public ArrayUnorderedList<Item> getItensPresentes() {
-        return itensPresentes;
+    public void addItem(Item item){
+        if(item != null){
+            itensPresentes.addToRear(item);
+            numItensPresentes++;
+        }
     }
 
-    public void setItensPresentes(ArrayUnorderedList<Item> itensPresentes) {
-        this.itensPresentes = itensPresentes;
+    public Item removeItem(){
+        Item removido = null;
+        if(hasItens()){
+            removido = itensPresentes.removeFirst();
+            numItensPresentes--;
+        }
+        return removido;
     }
 
     public int getNumItensPresentes() {
         return numItensPresentes;
     }
 
-    public void setNumItensPresentes(int numItensPresentes) {
-        this.numItensPresentes = numItensPresentes;
+    public int getNumPessoasPresentes() {
+        return numPessoasPresentes;
     }
 
 }

@@ -4,26 +4,29 @@
  */
 package Main;
 
-import API.Alvo;
+import API.*;
 import API.Enums.TipoAlvo;
-import API.ImportExport;
-import API.Missao;
-import Collections.Lists.LinkedUnorderedList;
+import Collections.Lists.ArrayUnorderedList;
+
+import java.util.Iterator;
 
 /**
  *
  * @author klotz
  */
-public class Main {
+public class Main<T> {
     public static void main(String[] args) {
         ImportExport importExport = new ImportExport();
-        LinkedUnorderedList<Missao> missoes = importExport.importMissoes();
+        ArrayUnorderedList<Missao> missoes = importExport.importMissoes();
 
         for (Missao missao : missoes) {
             System.out.println("Missao: " + missao.getCod_missao());
             System.out.println("Versao: " + missao.getVersao());
-            System.out.println("" + missao.getAlvo().getDivisao());
+            System.out.println("Alvo na divisão: " + missao.getAlvo().getDivisao());
+
+            Divisao heliporto = missao.encontrarDivisaoPorNome("Heliporto");
+            System.out.println(heliporto.getPessoa(0).getNome());
+
         }
     }
-
 }
