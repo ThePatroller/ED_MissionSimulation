@@ -1,6 +1,10 @@
 package API;
 
+import Collections.Exceptions.EmptyCollectionException;
+import Collections.Graphs.Graph;
 import Collections.Lists.ArrayUnorderedList;
+
+import java.util.Iterator;
 
 
 public class Divisao {
@@ -34,7 +38,7 @@ public class Divisao {
     }
 
     public boolean hasItens() {
-        return getNumItensPresentes() == 0;
+        return getNumItensPresentes() > 0;
     }
 
     public boolean isEntradaSaida() {
@@ -59,10 +63,9 @@ public class Divisao {
         }
     }
 
-    public Entidade removePessoa(int index){
-        Entidade removido = null;
-        if(pessoasPresentes.get(index) != null){
-            removido = pessoasPresentes.remove(pessoasPresentes.get(index));
+    public Entidade removePessoa(Entidade removido){
+        if(pessoasPresentes.contains(removido)){
+            removido = pessoasPresentes.remove(removido);
             numPessoasPresentes--;
         }
         return removido;
@@ -97,6 +100,20 @@ public class Divisao {
 
     public int getNumPessoasPresentes() {
         return numPessoasPresentes;
+    }
+
+    public String encontrarDivisaoAtual(Graph<String> mapa) {
+        Iterator iterator = mapa.iteratorBFS(this.nome);
+
+        while (iterator.hasNext()) {
+            String divisao = (String) iterator.next(); // Get next division on the graph
+            return divisao;
+        }
+        return null;
+    }
+
+    public boolean hasAlvo() {
+        return getNumPessoasPresentes() > 0;
     }
 
 }

@@ -6,48 +6,37 @@ import Collections.Stack.LinkedStack;
 
 public class Jogador extends Entidade {
 
-    private LinkedStack<Item> mochila;
-    private int vidaMaxima;
+    private static final int CAPACIDADE_MOCHILHA = 5;
 
-    public Jogador(String nome, int vida, int poder, TipoEntidade tipoEntidade) {
-        super(nome, vida, poder, tipoEntidade);
-        this.vidaMaxima = vida;
-        this.mochila = new LinkedStack<>();
+    private LinkedStack<Item> mochila;
+    public Jogador(String nome, int vida, int poder, String divisao, TipoEntidade tipoEntidade) {
+        super(nome, vida, poder, divisao, tipoEntidade);
+        this.mochila = new LinkedStack<>(CAPACIDADE_MOCHILHA);
     }
 
     public void usarColete(int pontos){
         if (pontos > 0) {
-            vidaMaxima = vidaMaxima + pontos;
+            this.setVida(getVida() + pontos);
         }
     }
 
     public void usarKit(){
         if (!mochila.isEmpty()) {
             Item item = mochila.pop();
-            int vidaFinal = this.getVida() + item.getPontosAdicionais();
-            if (vidaFinal > vidaMaxima) {
-                this.setVida(vidaMaxima);
-            } else {
-                this.setVida(vidaFinal);
+            if (item.getTipoItem() == TipoItem.KIT_VIDA) {
+                int vidaFinal = this.getVida() + item.getPontosAdicionais();
+                if (vidaFinal > 100) {
+                    this.setVida(100);
+                } else {
+                    this.setVida(vidaFinal);
+                }
             }
-
         }
     }
 
-    public void guardarKit(Item kit){
-        if(kit != null) {
+    public void guardarItem(Item kit){
+        if (mochila.size() < CAPACIDADE_MOCHILHA) {
             mochila.push(kit);
-        }
-    }
-
-    public void guardarItem(Item item){
-        if(item != null){
-            if(item.getTipoItem() == TipoItem.colete){
-                usarColete(item.getPontosAdicionais());
-            }
-            else{
-                guardarKit(item);
-            }
         }
     }
 

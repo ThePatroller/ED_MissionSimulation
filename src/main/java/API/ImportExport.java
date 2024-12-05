@@ -3,11 +3,9 @@ package API;
 import API.Enums.TipoAlvo;
 import API.Enums.TipoEntidade;
 import API.Enums.TipoItem;
-import API.MapaExtension;
-import Collections.Graphs.Graph;
+import API.MapExtension;
 import Collections.Lists.ArrayUnorderedList;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,7 +15,7 @@ import org.json.simple.parser.ParseException;
 public class ImportExport<T> {
 
     private static String currentWorkingDir = System.getProperty("user.dir");
-    protected static final String MISSOES_FILE_PATH = currentWorkingDir + "/src/main/java/Files/missoes.json";
+    protected static final String MISSOES_FILE_PATH = currentWorkingDir + "/src/Files/missoes.json";
 
     public ArrayUnorderedList<Missao> importMissoes() {
         ArrayUnorderedList<Missao> missoes = new ArrayUnorderedList<>();
@@ -33,16 +31,14 @@ public class ImportExport<T> {
             // Iterar sobre cada missão no array
             for (Object obj : missoesArray) {
                 JSONObject missaoObj = (JSONObject) obj;
-                Missao missao = new Missao();
 
                 // Extrair os dados da missão
                 String codMissao = (String) missaoObj.get("cod-missao");
                 long versao = (long) missaoObj.get("versao");
 
                 // Construir o grafo (mapa)
-                JSONArray mapaArray = (JSONArray) missaoObj.get("edificio");
+                JSONArray mapaArray = (JSONArray) missaoObj.get("mapa");
                 MapaExtension<Divisao> mapa = new MapaExtension<>();
-                missao.setMapa(mapa);
 
                 // Criar as divisões e adicionar ao grafo
                 for (Object div : mapaArray) {
@@ -58,8 +54,8 @@ public class ImportExport<T> {
                     String origem = (String) ligacao.get(0);
                     String destino = (String) ligacao.get(1);
 
-                    Divisao origemDivisao = missao.encontrarDivisaoPorNome(origem);
-                    Divisao destinoDivisao = missao.encontrarDivisaoPorNome(destino);
+                    Divisao origemDivisao = mapa.encontrarDivisaoPorNome(origem);
+                    Divisao destinoDivisao = mapa.encontrarDivisaoPorNome(destino);
 
                     if (origemDivisao != null && destinoDivisao != null) {
                         mapa.addEdge(origemDivisao, destinoDivisao);
@@ -70,7 +66,7 @@ public class ImportExport<T> {
                 JSONArray entradasSaidasArray = (JSONArray) missaoObj.get("entradas-saidas");
                 for (Object entradaSaida : entradasSaidasArray) {
                     String nomeDivisao = (String) entradaSaida;
-                    Divisao divisao = missao.encontrarDivisaoPorNome(nomeDivisao);
+                    Divisao divisao = mapa.encontrarDivisaoPorNome(nomeDivisao);
                     if (divisao != null) {
                         divisao.setEntradaSaida(true);
                     }
@@ -84,12 +80,13 @@ public class ImportExport<T> {
                     long poder = (long) inimigoJSON.get("poder");
                     String divisaoNome = (String) inimigoJSON.get("divisao");
 
-                    Divisao divisao = missao.encontrarDivisaoPorNome(divisaoNome);
+                    Divisao divisao = mapa.encontrarDivisaoPorNome(divisaoNome);
                     if (divisao != null) {
                         // Criar inimigo com tipo padrão
-                        Inimigo inimigo = new Inimigo(nomeInimigo, 100, (int) poder, divisaoNome, TipoEntidade.inimigo);
+                        Inimigo inimigo = new Inimigo(nomeInimigo, 100, (int) poder, divisaoNome, TipoEntidade.INIMIGO);
 
-                        divisao.addPessoa(inimigo);
+                        divisao.getPessoasPresentes().addToRear(inimigo);
+                        divisao.setNumPessoasPresentes(divisao.getNumPessoasPresentes() + 1);
                     }
                 }
 
@@ -108,13 +105,14 @@ public class ImportExport<T> {
                         pontos = ((Long) itemJSON.get("pontos-extra")).intValue();
                     }
 
-                    Divisao divisao = missao.encontrarDivisaoPorNome(divisaoNome);
+                    Divisao divisao = mapa.encontrarDivisaoPorNome(divisaoNome);
                     if (divisao != null) {
                         // Criar item com o tipo apropriado
                         TipoItem tipoItem = TipoItem.valueOf(tipoItemStr.toUpperCase().replace(" ", "_"));
                         Item item = new Item(divisaoNome, pontos, tipoItem);
 
-                        divisao.addItem(item);
+                        divisao.getItensPresentes().addToRear(item);
+                        divisao.setNumItensPresentes(divisao.getNumItensPresentes() + 1);
                     }
                 }
 
@@ -124,10 +122,8 @@ public class ImportExport<T> {
                 String tipoAlvo = (String) alvoObj.get("tipo");
                 Alvo alvo = new Alvo(divisaoAlvo, TipoAlvo.valueOf(tipoAlvo));
 
-                missao.setAlvo(alvo);
-                missao.setCod_missao(codMissao);
-                missao.setVersao((int) versao);
-
+                // Criar a missão e adicionar à lista
+                Missao missao = new Missao(codMissao, (int) versao, mapa, alvo);
                 missoes.addToRear(missao);
             }
         } catch (IOException | ParseException e) {

@@ -44,4 +44,12 @@ public class MapaExtension<T> extends Network {
         return null;
     }
 
+    public Divisao getDivisao(String nomeDivisao) {
+        int index = getIndex((T) nomeDivisao);
+        if (index == -1) {
+            return null;
+        }
+        return (Divisao) vertices[index];
+    }
+
 }

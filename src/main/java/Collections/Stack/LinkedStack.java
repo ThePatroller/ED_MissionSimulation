@@ -8,6 +8,16 @@ public class LinkedStack<T> implements StackADT<T> {
     private int counter;
     private LinearNode<T> top;
 
+    public LinkedStack() {
+        this.counter = 0;
+        this.top = null;
+    }
+
+    public LinkedStack(int counter) {
+        this.counter = counter;
+        this.top = null;
+    }
+
     @Override
     public void push(T element) {
         LinearNode<T> newNode = new LinearNode<>(element);
