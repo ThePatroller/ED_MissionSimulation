@@ -116,6 +116,17 @@ public abstract class ArrayList<T> implements ListADT<T> {
         return false;
     }
 
+    private boolean indexIsValid(int index) {
+        return ((index < size()) && index >= 0);
+    }
+
+    public T get(int index) throws IllegalArgumentException {
+        if (!indexIsValid(index)) {
+            throw new IllegalArgumentException("Index invalido!");
+        }
+        return list[index];
+    }
+
     @Override
     public boolean isEmpty() {
         return size() == 0;

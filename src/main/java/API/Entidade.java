@@ -19,6 +19,13 @@ public class Entidade {
         this.tipoEntidade = tipoEntidade;
     }
 
+    public Entidade(String nome, int vida, int poder, TipoEntidade tipoEntidade) {
+        this.nome = nome;
+        this.vida = vida;
+        this.poder = poder;
+        this.tipoEntidade = tipoEntidade;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -57,6 +64,12 @@ public class Entidade {
 
     public void setTipoEntidade(TipoEntidade tipoEntidade) {
         this.tipoEntidade = tipoEntidade;
+    }
+
+    public void tomarDano(int dano){
+        if(dano > 0){
+            this.vida = vida - dano;
+        }
     }
 
 }
