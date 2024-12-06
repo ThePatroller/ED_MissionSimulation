@@ -52,4 +52,23 @@ public class MapaExtension<T> extends Network {
         return (Divisao) vertices[index];
     }
 
+    public ArrayUnorderedList<Inimigo> getTodosInimigos() {
+        ArrayUnorderedList<Inimigo> inimigos = new ArrayUnorderedList<>();
+        for (T vertice : vertices) {
+            if (vertice instanceof Divisao) {
+                Divisao divisao = (Divisao) vertice;
+                inimigos.addToRear(divisao.getPessoa());
+            }
+        }
+        return inimigos;
+    }
+
+    public ArrayUnorderedList<Divisao> getTodasDivisoes() {
+        ArrayUnorderedList<Divisao> divisoes = new ArrayUnorderedList<>();
+        for (Divisao divisao : divisoes) {
+            divisoes.addToRear(divisao);
+        }
+        return divisoes;
+    }
+
 }

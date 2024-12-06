@@ -72,4 +72,8 @@ public class Entidade {
         }
     }
 
+    public boolean estaVivo() {
+        return this.getVida() > 0;
+    }
+
 }

@@ -1,11 +1,9 @@
 package API;
 
 import API.Enums.TipoEntidade;
-import Collections.Graphs.Graph;
 import Collections.Lists.ArrayUnorderedList;
-import com.sun.org.apache.xpath.internal.operations.Div;
 
-import java.util.Iterator;
+import java.util.Random;
 
 public class ModoManual {
 
@@ -60,6 +58,13 @@ public class ModoManual {
         }
     }
 
+    public void fimDeJogo() {
+        if (!jogador.estaVivo()) {
+            System.out.println("Missão Falhada, Tó Cruz bateu as botas!");
+            System.exit(0);
+        }
+    }
+
     public void moverJogador(Divisao origem, Divisao destino){
         if(origem != null && destino != null){
             jogador.setDivisao(destino.getNome());
@@ -78,41 +83,40 @@ public class ModoManual {
                 moverTodosInimigos();
             }
             if(destino.hasAlvo()){
-
+                confrontoJogador(destino);
             }
         }
     }
 
-    public void moverTodosInimigos() {
+    public void moverTodosInimigos(Divisao divisaoAtualJogador, MapaExtension mapa) {
+        Random random = new Random();
 
-        MapaExtension mapa = null;
-        Iterator iterator = mapa.iteratorBFS("Porta"); //SUpondo que a entrada vai ser pela porta (igual ao obj do jogador em cima)
+        for (Divisao divisao : mapa.getTodasDivisoes()) {
+            if (divisao.equals(divisaoAtualJogador)) {
+                continue; // Ignore the tó room
+            }
+        }
 
-        while (iterator.hasNext()) {
-            String nomeDivisaoAtual = (String) iterator.next();
-            Divisao divisaoAtual = mapa.getDivisao(nomeDivisaoAtual);
+        ArrayUnorderedList<Entidade> inimigos = mapa.getTodosInimigos(); // get all enemies in the build
 
-            // Itera sobre as pessoas na divisao
-            if (divisaoAtual.hasAlvo()) {
-                for (int i = 0; i < divisaoAtual.getNumPessoasPresentes(); i++) {
-                    Entidade pessoa = divisaoAtual.getPessoa(i);
+        for (Entidade inimigo : inimigos) {
+            if (inimigo.estaVivo()) {
+                ArrayUnorderedList<Divisao> adjacencias = mapa.getAdj(mapa.getTodasDivisoes());
 
-                    if (pessoa.getTipoEntidade() == TipoEntidade.INIMIGO && !jogador) {
-                        ArrayUnorderedList<String> adj = mapa.getAdj(nomeDivisaoAtual);
-                        if (!adj.isEmpty()) {
-                            int randomIndex = (int) (Math.random() * adj.size());
-                            String nomeDivisaoDestino = adj.remove(randomIndex);
+                if (!adjacencias.isEmpty()) {
+                    int randomIndex = random.nextInt(adjacencias.size());
+                    Divisao newDivisao = adjacencias.remove(randomIndex);
 
-                            Divisao destino = mapa.getDivisao(nomeDivisaoDestino);
-                            destino.addPessoa(divisaoAtual.removePessoa(pessoa));
-                        }
-                    }
+                    // update the enemies' divisions
+                    mapa.getTodasDivisoes().remove(inimigo);
+                    newDivisao.addPessoa(inimigo);
+                    inimigo.setDivisao(newDivisao.getNome());
                 }
             }
-
         }
-
     }
+
+
 
 
 

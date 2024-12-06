@@ -1,5 +1,6 @@
 package API;
 
+import API.Enums.TipoEntidade;
 import Collections.Exceptions.EmptyCollectionException;
 import Collections.Graphs.Graph;
 import Collections.Lists.ArrayUnorderedList;
@@ -85,6 +86,15 @@ public class Divisao {
         }
     }
 
+    public Item removeItem(Item item) { //If a specific item needs to be removed (but only the top can be) it can be useful later
+        if (itensPresentes.contains(item)) {
+            itensPresentes.remove(item);
+            numItensPresentes--;
+            return item;
+        }
+        return null;
+    }
+
     public Item removeItem(){
         Item removido = null;
         if(hasItens()){
@@ -102,12 +112,17 @@ public class Divisao {
         return numPessoasPresentes;
     }
 
-    public String encontrarDivisaoAtual(Graph<String> mapa) {
-        Iterator iterator = mapa.iteratorBFS(this.nome);
+    public String encontrarDivisaoAtual1(Graph<Divisao> mapa) {
+        Iterator<Divisao> iterator = mapa.iteratorBFS(this);
 
         while (iterator.hasNext()) {
-            String divisao = (String) iterator.next(); // Get next division on the graph
-            return divisao;
+            Divisao divisao = iterator.next();
+            for (int i = 0; i < divisao.getNumPessoasPresentes(); i++) {
+                Entidade pessoa = divisao.getPessoa(i);
+                if (pessoa != null && pessoa.equals(TipoEntidade.JOGADOR)) {
+                    return divisao.getNome();
+                }
+            }
         }
         return null;
     }
