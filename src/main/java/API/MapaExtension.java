@@ -3,8 +3,6 @@ package API;
 import Collections.Graphs.Network;
 import Collections.Lists.ArrayUnorderedList;
 
-import java.util.Iterator;
-
 public class MapaExtension<T> extends Network {
 
     public MapaExtension() {

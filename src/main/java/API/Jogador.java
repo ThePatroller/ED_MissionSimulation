@@ -40,4 +40,8 @@ public class Jogador extends Entidade {
         }
     }
 
+    public void resgatarItem() { // Need to improve this method
+        System.out.println("Item coletado.");
+    }
+
 }

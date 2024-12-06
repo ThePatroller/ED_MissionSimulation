@@ -112,7 +112,7 @@ public class Divisao {
         return numPessoasPresentes;
     }
 
-    public String encontrarDivisaoAtual1(Graph<Divisao> mapa) {
+    public String encontrarDivisaoAtual(Graph<Divisao> mapa) {
         Iterator<Divisao> iterator = mapa.iteratorBFS(this);
 
         while (iterator.hasNext()) {
